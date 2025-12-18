@@ -6,18 +6,17 @@
   <title>Young You Journal</title>
 
   <style>
-    /* Global style */
     body {
       margin: 0;
       font-family: system-ui, sans-serif;
-      font-style: italic;
-      font-size: 0.9rem;
-      letter-spacing: 0.02em;
+      background: #111;
       color: #f5f5f5;
-      background: radial-gradient(circle at top, hsl(var(--base-hue), var(--saturation), calc(var(--lightness) + 10%)),
-      hsl(var(--base-hue), var(--saturation), var(--lightness)));
-      transition: background 1.2s ease;
       min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
     }
 
     main {
@@ -26,10 +25,8 @@
       padding: 2rem;
     }
 
-    .caption {
-      font-size: 0.85rem;
-      opacity: 0.6;
-      margin-bottom: 1rem;
+    h1 {
+      font-weight: 300;
     }
 
     .input-group {
@@ -39,25 +36,24 @@
     label {
       display: block;
       margin-bottom: 0.4rem;
-      opacity: 0.8;
     }
 
     input[type="range"],
     textarea,
     input[type="text"] {
       width: 100%;
+      padding: 0.6rem;
     }
 
     textarea {
       height: 90px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.08);
       border: none;
       color: white;
-      padding: 0.6rem;
     }
 
     button {
-      background: rgba(255,255,255,0.15);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
       color: white;
       padding: 0.6rem 1.2rem;
@@ -65,96 +61,28 @@
       margin-top: 1rem;
     }
 
-    /* THREAD / STRING VISUAL */
+    #rug {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      min-height: 220px;
+      overflow: hidden;
+    }
+
     .thread {
       height: 6px;
       border-radius: 6px;
       margin: 6px 0;
       transition: opacity 1s, filter 1s;
-      animation: threadWobble 3s ease-in-out infinite;
-    }
-
-    @keyframes threadWobble {
-      0% { transform: rotate(0); }
-      50% { transform: rotate(10deg); }
-      100% { transform: rotate(0); }
-    }
-
-    /* RUG */
-    #rug {
-      margin-top: 3rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.2);
-      min-height: 220px;
-      overflow: hidden;
-    }
-
-    .goal-thread {
-      height: 10px;
-      position: relative;
-      transition: all 0.6s ease-in-out;
-    }
-
-    .gem {
-      position: absolute;
-      right: 10px;
-      top: -6px;
-      font-size: 14px;
-      color: silver;
-    }
-
-    .reminder {
-      font-size: 0.75rem;
-      opacity: 0;
-      text-align: center;
-      margin-top: 1rem;
-      animation: none;
-    }
-
-    .reminder.show {
-      animation: floatIn 3s ease forwards;
-    }
-
-    @keyframes floatIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      50% { opacity: 0.7; }
-      100% { opacity: 0; transform: translateY(-10px); }
-    }
-    
-    .rug-thread {
-      width: 100%;
-      height: 6px;
-      margin: 3px 0;
-      opacity: 0.85;
-      animation: settle 2s ease forwards;
-    }
-
-    @keyframes settle {
-      from {
-        transform: translateY(-10px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 0.85;
-      }
     }
   </style>
 </head>
 
 <body>
-  <div id="rug">
-    <!-- woven threads will accumulate here -->
-  </div>
-
   <main>
     <h1>Young You Journal</h1>
-    <p class="caption">
-      Each entry becomes a thread. Over time, these threads weave a record of care.
-    </p>
 
-    <p id="goalReminder" class="reminder"></p>
-
+    <!-- INPUTS -->
     <div class="input-group">
       <label>How intense does today feel?</label>
       <input type="range" id="intensity" min="0" max="100" value="50">
@@ -176,14 +104,17 @@
     </div>
 
     <button onclick="saveEntry()">Weave this entry</button>
-  </main>
 
-  <div id="rug"></div>
+    <div id="rug">
+      <!-- woven threads will accumulate here -->
+    </div>
+  </main>
 
   <script>
     let goalMemory = {};
     let entryCount = 0;
 
+    // Register the goal and track repetition
     function registerGoal(goalText) {
       if (!goalMemory[goalText]) {
         goalMemory[goalText] = 1;
@@ -192,33 +123,7 @@
       }
     }
 
-    function checkGoalReminder() {
-      if (entryCount % 10 === 0) {
-        const goals = Object.keys(goalMemory);
-        if (goals.length > 0) {
-          const g = goals[0]; // MVP: first goal
-          const r = document.getElementById("goalReminder");
-          r.textContent = `Did we ${g} today?`;
-          r.classList.add("show");
-          setTimeout(() => r.classList.remove("show"), 3000);
-        }
-      }
-    }
-
-    function addGoalThread(color, isGoal = false, strength = 1) {
-      const rug = document.getElementById("rug");
-      const t = document.createElement("div");
-      t.className = "goal-thread";
-      t.style.background = color;
-
-      if (isGoal) {
-        t.style.height = 8 + strength * 2 + "px";
-        t.style.background = "linear-gradient(90deg, silver, " + color + ", silver)";
-        t.style.boxShadow = "0 0 6px rgba(220,220,255,0.8)";
-      }
-      rug.appendChild(t);
-    }
-
+    // Save the entry with logic for threads and goal handling
     function saveEntry() {
       const intensity = +document.getElementById('intensity').value;
       const pleasant = +document.getElementById('pleasantness').value;
@@ -236,33 +141,15 @@
       // THREAD CREATION
       const thread = document.createElement('div');
       thread.className = 'thread';
-      thread.style.background =
+      thread.style.background = 
         `linear-gradient(90deg,
           hsl(${hue - 20}, ${saturation}%, ${lightness}%),
           hsl(${hue + 20}, ${saturation}%, ${lightness}%)
         )`;
 
-      if (intensity > 80) thread.classList.add('burn');
-      else if (pleasant > 60) thread.classList.add('glow');
-      else thread.classList.add('dim');
-
       document.getElementById('rug').appendChild(thread);
 
       // GOAL LOGIC
       if (goal) {
-        registerGoal(goal);  // Increment the goal count
-        entryCount++;  // Increment total entries
-        
-        if (goalMemory[goal] % 10 === 0) {
-          // Add the goal thread with growth
-          addGoalThread(`hsl(${hue}, ${saturation}%, ${lightness}%)`, true, goalMemory[goal]);
-        }
-      }
-
-      document.getElementById('entry').value = '';
-      checkGoalReminder();
-    }
-  </script>
-
-</body>
-</html>
+        registerGoal(goal);
+        entryCount++
