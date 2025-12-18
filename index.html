@@ -1,213 +1,268 @@
- 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Young You Journal</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Young You Journal</title>
 
-<style>
-  :root {
-    --base-hue: 200;
-    --saturation: 40%;
-    --lightness: 30%;
-  }
+  <style>
+    /* Global style */
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      color: #f5f5f5;
+      background: radial-gradient(circle at top, hsl(var(--base-hue), var(--saturation), calc(var(--lightness) + 10%)),
+      hsl(var(--base-hue), var(--saturation), var(--lightness)));
+      transition: background 1.2s ease;
+      min-height: 100vh;
+    }
 
-  body {
-    margin: 0;
-    font-family: system-ui, sans-serif;
-    background: radial-gradient(
-      circle at top,
-      hsl(var(--base-hue), var(--saturation), calc(var(--lightness) + 10%)),
-      hsl(var(--base-hue), var(--saturation), var(--lightness))
-    );
-    color: #f5f5f5;
-    transition: background 1.2s ease;
-    min-height: 100vh;
-  }
+    main {
+      max-width: 720px;
+      margin: auto;
+      padding: 2rem;
+    }
 
-  main {
-    max-width: 720px;
-    margin: auto;
-    padding: 2rem;
-  }
+    .caption {
+      font-size: 0.85rem;
+      opacity: 0.6;
+      margin-bottom: 1rem;
+    }
 
-  h1 {
-    font-weight: 300;
-    letter-spacing: 0.05em;
-  }
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
 
-  .caption {
-    font-size: 0.85rem;
-    opacity: 0.6;
-    margin-bottom: 1rem;
-  }
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      opacity: 0.8;
+    }
 
-  .input-group {
-    margin-bottom: 1.5rem;
-  }
+    input[type="range"],
+    textarea,
+    input[type="text"] {
+      width: 100%;
+    }
 
-  label {
-    display: block;
-    margin-bottom: 0.4rem;
-    opacity: 0.8;
-  }
+    textarea {
+      height: 90px;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: white;
+      padding: 0.6rem;
+    }
 
-  input[type="range"],
-  textarea,
-  input[type="text"] {
-    width: 100%;
-  }
+    button {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
 
-  textarea {
-    height: 90px;
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: white;
-    padding: 0.6rem;
-  }
+    /* THREAD / STRING VISUAL */
+    .thread {
+      height: 6px;
+      border-radius: 6px;
+      margin: 6px 0;
+      transition: opacity 1s, filter 1s;
+      animation: threadWobble 3s ease-in-out infinite;
+    }
 
-  button {
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    cursor: pointer;
-    margin-top: 1rem;
-  }
+    @keyframes threadWobble {
+      0% { transform: rotate(0); }
+      50% { transform: rotate(10deg); }
+      100% { transform: rotate(0); }
+    }
 
-  /* THREAD / STRING VISUAL */
-  .thread {
-    height: 6px;
-    border-radius: 6px;
-    margin: 6px 0;
-    transition: opacity 1s, filter 1s;
-  }
+    /* RUG */
+    #rug {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      min-height: 220px;
+      overflow: hidden;
+    }
 
-  .dim {
-    opacity: 0.3;
-    filter: blur(1px);
-  }
+    .goal-thread {
+      height: 10px;
+      position: relative;
+      transition: all 0.6s ease-in-out;
+    }
 
-  .glow {
-    filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
-  }
+    .gem {
+      position: absolute;
+      right: 10px;
+      top: -6px;
+      font-size: 14px;
+      color: silver;
+    }
 
-  .burn {
-    filter: brightness(0.6) contrast(1.4);
-  }
+    .reminder {
+      font-size: 0.75rem;
+      opacity: 0;
+      text-align: center;
+      margin-top: 1rem;
+      animation: none;
+    }
 
-  /* RUG */
-  #rug {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255,255,255,0.2);
-  }
+    .reminder.show {
+      animation: floatIn 3s ease forwards;
+    }
 
-  .goal-thread {
-    height: 10px;
-    background: linear-gradient(90deg, silver, white);
-    position: relative;
-  }
+    @keyframes floatIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      50% { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+    
+    .rug-thread {
+      width: 100%;
+      height: 6px;
+      margin: 3px 0;
+      opacity: 0.85;
+      animation: settle 2s ease forwards;
+    }
 
-  .gem {
-    position: absolute;
-    right: 10px;
-    top: -6px;
-    font-size: 14px;
-  }
-</style>
+    @keyframes settle {
+      from {
+        transform: translateY(-10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 0.85;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<main>
+  <div id="rug">
+    <!-- woven threads will accumulate here -->
+  </div>
 
-<h1>Young You Journal</h1>
-<p class="caption">
-Each entry becomes a thread.  
-Over time, these threads weave a record of care.
-</p>
+  <main>
+    <h1>Young You Journal</h1>
+    <p class="caption">
+      Each entry becomes a thread. Over time, these threads weave a record of care.
+    </p>
 
-<!-- INPUTS -->
-<div class="input-group">
-<label>How intense does today feel?</label>
-<input type="range" id="intensity" min="0" max="100" value="50">
-</div>
+    <p id="goalReminder" class="reminder"></p>
 
-<div class="input-group">
-<label>How pleasant was the day?</label>
-<input type="range" id="pleasantness" min="0" max="100" value="50">
-</div>
+    <div class="input-group">
+      <label>How intense does today feel?</label>
+      <input type="range" id="intensity" min="0" max="100" value="50">
+    </div>
 
-<div class="input-group">
-<label>Reflection</label>
-<textarea id="entry"></textarea>
-</div>
+    <div class="input-group">
+      <label>How pleasant was the day?</label>
+      <input type="range" id="pleasantness" min="0" max="100" value="50">
+    </div>
 
-<div class="input-group">
-<label>Goal or habit (optional)</label>
-<input type="text" id="goal" placeholder="Something you are trying to grow">
-</div>
+    <div class="input-group">
+      <label>Reflection</label>
+      <textarea id="entry"></textarea>
+    </div>
 
-<button onclick="saveEntry()">Weave this entry</button>
+    <div class="input-group">
+      <label>Goal or habit (optional)</label>
+      <input type="text" id="goal" placeholder="Something you are trying to grow">
+    </div>
 
-<!-- RUG -->
-<section id="rug">
-<p class="caption">
-Accumulated threads form a living textile — a memory of effort.
-</p>
-</section>
+    <button onclick="saveEntry()">Weave this entry</button>
+  </main>
 
-</main>
+  <div id="rug"></div>
 
-<script>
-let entries = [];
-let goalCounter = 0;
+  <script>
+    let goalMemory = {};
+    let entryCount = 0;
 
-function saveEntry() {
-  const intensity = +document.getElementById('intensity').value;
-  const pleasant = +document.getElementById('pleasantness').value;
-  const goal = document.getElementById('goal').value;
-
-  // COLOR LOGIC
-  const hue = 180 + (pleasant - 50);
-  const saturation = 20 + intensity * 0.6;
-  const lightness = 20 + pleasant * 0.4;
-
-  document.documentElement.style.setProperty('--base-hue', hue);
-  document.documentElement.style.setProperty('--saturation', saturation + '%');
-  document.documentElement.style.setProperty('--lightness', lightness + '%');
-
-  // THREAD
-  const thread = document.createElement('div');
-  thread.className = 'thread';
-  thread.style.background =
-    `linear-gradient(90deg,
-      hsl(${hue - 20}, ${saturation}%, ${lightness}%),
-      hsl(${hue + 20}, ${saturation}%, ${lightness}%)
-    )`;
-
-  if (intensity > 80) thread.classList.add('burn');
-  else if (pleasant > 60) thread.classList.add('glow');
-  else thread.classList.add('dim');
-
-  document.getElementById('rug').appendChild(thread);
-
-  // GOAL LOGIC (simple but symbolic)
-  if (goal) {
-    goalCounter++;
-    if (goalCounter % 10 === 0) {
-      const goalThread = document.createElement('div');
-      goalThread.className = 'goal-thread';
-      goalThread.innerHTML = `<span class="gem">◆</span>`;
-      document.getElementById('rug').appendChild(goalThread);
+    function registerGoal(goalText) {
+      if (!goalMemory[goalText]) {
+        goalMemory[goalText] = 1;
+      } else {
+        goalMemory[goalText]++;
+      }
     }
-  }
 
-  document.getElementById('entry').value = '';
-}
-</script>
+    function checkGoalReminder() {
+      if (entryCount % 10 === 0) {
+        const goals = Object.keys(goalMemory);
+        if (goals.length > 0) {
+          const g = goals[0]; // MVP: first goal
+          const r = document.getElementById("goalReminder");
+          r.textContent = `Did we ${g} today?`;
+          r.classList.add("show");
+          setTimeout(() => r.classList.remove("show"), 3000);
+        }
+      }
+    }
+
+    function addGoalThread(color, isGoal = false, strength = 1) {
+      const rug = document.getElementById("rug");
+      const t = document.createElement("div");
+      t.className = "goal-thread";
+      t.style.background = color;
+
+      if (isGoal) {
+        t.style.height = 8 + strength * 2 + "px";
+        t.style.background = "linear-gradient(90deg, silver, " + color + ", silver)";
+        t.style.boxShadow = "0 0 6px rgba(220,220,255,0.8)";
+      }
+      rug.appendChild(t);
+    }
+
+    function saveEntry() {
+      const intensity = +document.getElementById('intensity').value;
+      const pleasant = +document.getElementById('pleasantness').value;
+      const goal = document.getElementById('goal').value;
+
+      // COLOR LOGIC
+      const hue = 180 + (pleasant - 50);
+      const saturation = 20 + intensity * 0.6;
+      const lightness = 20 + pleasant * 0.4;
+
+      document.documentElement.style.setProperty('--base-hue', hue);
+      document.documentElement.style.setProperty('--saturation', saturation + '%');
+      document.documentElement.style.setProperty('--lightness', lightness + '%');
+
+      // THREAD CREATION
+      const thread = document.createElement('div');
+      thread.className = 'thread';
+      thread.style.background =
+        `linear-gradient(90deg,
+          hsl(${hue - 20}, ${saturation}%, ${lightness}%),
+          hsl(${hue + 20}, ${saturation}%, ${lightness}%)
+        )`;
+
+      if (intensity > 80) thread.classList.add('burn');
+      else if (pleasant > 60) thread.classList.add('glow');
+      else thread.classList.add('dim');
+
+      document.getElementById('rug').appendChild(thread);
+
+      // GOAL LOGIC
+      if (goal) {
+        registerGoal(goal);  // Increment the goal count
+        entryCount++;  // Increment total entries
+        
+        if (goalMemory[goal] % 10 === 0) {
+          // Add the goal thread with growth
+          addGoalThread(`hsl(${hue}, ${saturation}%, ${lightness}%)`, true, goalMemory[goal]);
+        }
+      }
+
+      document.getElementById('entry').value = '';
+      checkGoalReminder();
+    }
+  </script>
 
 </body>
 </html>
